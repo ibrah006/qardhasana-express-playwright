@@ -88,12 +88,10 @@ app.use('/proxy', (req, res, next) => {
 let browser: any = null;
 
 async function getBrowser() {
-  if (!browser) {
-    browser = await chromium.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-  }
+  browser = await chromium.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
   return browser;
 }
 
