@@ -109,6 +109,14 @@ async function takeScreenshot(url: string) {
   //   height: 800
   // });
 
+  // 3️⃣ Limit max scroll / page height
+  // Get the real page height
+  const pageHeight = await page.evaluate(() => document.body.scrollHeight);
+
+  // Set a standard maximum scroll height (e.g., 2000px)
+  const maxHeight = 2000;
+  const finalHeight = Math.min(pageHeight, maxHeight);
+
   // Load the site
   await page.goto(url, {
     waitUntil: 'networkidle',
