@@ -133,9 +133,9 @@ async function takeScreenshot(url: string, frameWidth: number) {
     document.documentElement.scrollHeight
   );
 
-  const width = calculateWidth(frameWidth);
+  // const width = calculateWidth(frameWidth);
 
-  console.log("reuqested preview width:", width);
+  console.log("reuqested preview width:", frameWidth);
   
   const screenshot = await page.screenshot({
     fullPage: true,
@@ -143,7 +143,7 @@ async function takeScreenshot(url: string, frameWidth: number) {
     clip: {
       x: 0,
       y: 0,
-      width: width,
+      width: frameWidth,
       height: fullPageHeight < MAX_SCROLL_OFFSET? fullPageHeight : MAX_SCROLL_OFFSET, // 👈 max height
     },
   });
