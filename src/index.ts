@@ -89,6 +89,10 @@ app.use('/proxy', (req, res, next) => {
 
 let browser: any = null;
 
+function calculateWidth(screenWidth: number): number {
+  return Math.max(320, Math.min(screenWidth, 1280));
+}
+
 async function getBrowser() {
   browser = await chromium.launch({
     headless: true,
@@ -97,7 +101,7 @@ async function getBrowser() {
   return browser;
 }
 
-async function takeScreenshot(url: string) {
+async function takeScreenshot(url: string, frameWidth: number) {
   const browser = await getBrowser();
   // const browser = await puppeteer.launch({
   //   // headless: true,
@@ -128,6 +132,8 @@ async function takeScreenshot(url: string) {
   const fullPageHeight = await page.evaluate(() =>
     document.documentElement.scrollHeight
   );
+
+  const width = calculateWidth(frameWidth);
   
   const screenshot = await page.screenshot({
     fullPage: true,
@@ -135,7 +141,7 @@ async function takeScreenshot(url: string) {
     clip: {
       x: 0,
       y: 0,
-      width: 1280,
+      width: width,
       height: fullPageHeight < MAX_SCROLL_OFFSET? fullPageHeight : MAX_SCROLL_OFFSET, // 👈 max height
     },
   });
@@ -148,6 +154,7 @@ async function takeScreenshot(url: string) {
 app.post("/_api/ss-preview", async (req, res) => {
   // const { url } = req.body;
   const url = req.query.url as string;
+  const width = Number(req.query.width);
 
   if (!url || !url.startsWith("http")) {
     res.status(400).json({ error: "Invalid URL" });
@@ -155,7 +162,7 @@ app.post("/_api/ss-preview", async (req, res) => {
   }
 
   try {
-    const image = await takeScreenshot(url);
+    const image = await takeScreenshot(url, width);
 
     res.set("Content-Type", "image/png");
     res.send(image);
