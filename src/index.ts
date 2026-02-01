@@ -131,6 +131,8 @@ async function takeScreenshot(url: string) {
     fullPage: true,
     type: 'png',
     clip: {
+      x: 0,
+      y: 0,
       width: 1280,
       height: fullPageHeight < 1750? fullPageHeight : 1750, // 👈 your max height
     },
