@@ -134,6 +134,8 @@ async function takeScreenshot(url: string, frameWidth: number) {
   );
 
   const width = calculateWidth(frameWidth);
+
+  console.log("reuqested preview width:", width);
   
   const screenshot = await page.screenshot({
     fullPage: true,
