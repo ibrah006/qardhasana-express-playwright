@@ -141,10 +141,10 @@ async function takeScreenshot(url: string, ratio: number) {
   const viewport = viewportFromRatio(ratio);
 
   // set viewport
-  await page.setViewportSize({
-    width: viewport.height,
-    height: viewport.width,
-  });
+  // await page.setViewportSize({
+  //   width: viewport.height,
+  //   height: viewport.width,
+  // });
 
   // Load the site
   await page.goto(url, {
@@ -152,26 +152,21 @@ async function takeScreenshot(url: string, ratio: number) {
     timeout: 30000
   });
 
-  const fullPageHeight = await page.evaluate(() =>
-    document.documentElement.scrollHeight
-  );
+  // const fullPageHeight = await page.evaluate(() =>
+  //   document.documentElement.scrollHeight
+  // );
 
   // const width = calculateWidth(frameWidth);
-
-  console.log("viewport:", {
-    width: viewport.height,
-    height: viewport.width,
-  });
   
   const screenshot = await page.screenshot({
     fullPage: true,
     type: 'png',
-    clip: {
-      x: 0,
-      y: 0,
-      width: 1280,
-      height: fullPageHeight < MAX_SCROLL_OFFSET? fullPageHeight : MAX_SCROLL_OFFSET, // 👈 max height
-    },
+    // clip: {
+    //   x: 0,
+    //   y: 0,
+    //   width: 1280,
+    //   height: fullPageHeight < MAX_SCROLL_OFFSET? fullPageHeight : MAX_SCROLL_OFFSET, // 👈 max height
+    // },
   });
   
   await page.close();
