@@ -169,6 +169,7 @@ async function takeScreenshot(url: string, ratio: number) {
     clip: {
       x: 0,
       y: 0,
+      width: viewport.width,
       height: fullPageHeight < MAX_SCROLL_OFFSET? fullPageHeight : MAX_SCROLL_OFFSET, // 👈 max height
     },
   });
