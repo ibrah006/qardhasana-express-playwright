@@ -89,8 +89,23 @@ app.use('/proxy', (req, res, next) => {
 
 let browser: any = null;
 
-function calculateWidth(screenWidth: number): number {
-  return Math.max(320, Math.min(screenWidth, 1280));
+// Calculate preview viewport
+function viewportFromRatio(
+  ratio: number,       // width / height
+  maxDimension = 1280  // max width or height
+) {
+  if (!ratio || ratio <= 0) ratio = 16 / 9; // fallback
+
+  let width = maxDimension;
+  let height = Math.round(width / ratio);
+
+  // If height exceeds maxDimension, scale both down
+  if (height > maxDimension) {
+    height = maxDimension;
+    width = Math.round(height * ratio);
+  }
+
+  return { width, height };
 }
 
 async function getBrowser() {
@@ -101,7 +116,7 @@ async function getBrowser() {
   return browser;
 }
 
-async function takeScreenshot(url: string, frameWidth: number) {
+async function takeScreenshot(url: string, ratio: number) {
   const browser = await getBrowser();
   // const browser = await puppeteer.launch({
   //   // headless: true,
@@ -123,6 +138,14 @@ async function takeScreenshot(url: string, frameWidth: number) {
   // const maxHeight = 1200;
   // const finalHeight = Math.min(pageHeight, maxHeight);
 
+  const viewport = viewportFromRatio(ratio);
+
+  // set viewport
+  await page.setViewportSize({
+    width: viewport.height,
+    height: viewport.width,
+  });
+
   // Load the site
   await page.goto(url, {
     waitUntil: 'networkidle',
@@ -135,7 +158,10 @@ async function takeScreenshot(url: string, frameWidth: number) {
 
   // const width = calculateWidth(frameWidth);
 
-  console.log("reuqested preview width:", frameWidth);
+  console.log("viewport:", {
+    width: viewport.height,
+    height: viewport.width,
+  });
   
   const screenshot = await page.screenshot({
     fullPage: true,
@@ -143,7 +169,6 @@ async function takeScreenshot(url: string, frameWidth: number) {
     clip: {
       x: 0,
       y: 0,
-      width: frameWidth,
       height: fullPageHeight < MAX_SCROLL_OFFSET? fullPageHeight : MAX_SCROLL_OFFSET, // 👈 max height
     },
   });
@@ -156,7 +181,7 @@ async function takeScreenshot(url: string, frameWidth: number) {
 app.post("/_api/ss-preview", async (req, res) => {
   // const { url } = req.body;
   const url = req.query.url as string;
-  const width = Number(req.query.width);
+  const ratio = Number(req.query.viewportRatio);
 
   if (!url || !url.startsWith("http")) {
     res.status(400).json({ error: "Invalid URL" });
@@ -164,7 +189,7 @@ app.post("/_api/ss-preview", async (req, res) => {
   }
 
   try {
-    const image = await takeScreenshot(url, width);
+    const image = await takeScreenshot(url, ratio);
 
     res.set("Content-Type", "image/png");
     res.send(image);
