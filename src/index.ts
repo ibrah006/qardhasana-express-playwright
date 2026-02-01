@@ -122,10 +122,18 @@ async function takeScreenshot(url: string) {
     waitUntil: 'networkidle',
     timeout: 30000
   });
+
+  const fullPageHeight = await page.evaluate(() =>
+    document.documentElement.scrollHeight
+  );
   
   const screenshot = await page.screenshot({
     fullPage: true,
-    type: 'png'
+    type: 'png',
+    clip: {
+      width: 1280,
+      height: fullPageHeight < 1750? fullPageHeight : 1750, // 👈 your max height
+    },
   });
   
   await page.close();
