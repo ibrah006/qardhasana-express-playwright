@@ -7,6 +7,8 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import helmet from "helmet";
 import { chromium } from 'playwright';
 
+const MAX_SCROLL_OFFSET = 2200;
+
 const app = express();
 
 dotenv.config();
@@ -134,7 +136,7 @@ async function takeScreenshot(url: string) {
       x: 0,
       y: 0,
       width: 1280,
-      height: fullPageHeight < 1750? fullPageHeight : 1750, // 👈 your max height
+      height: fullPageHeight < MAX_SCROLL_OFFSET? fullPageHeight : MAX_SCROLL_OFFSET, // 👈 max height
     },
   });
   
