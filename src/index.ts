@@ -152,6 +152,8 @@ async function takeScreenshot(url: string, ratio: number) {
     timeout: 30000
   });
 
+  console.log("website: ", url);
+
   // const fullPageHeight = await page.evaluate(() =>
   //   document.documentElement.scrollHeight
   // );
