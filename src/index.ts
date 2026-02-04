@@ -138,7 +138,7 @@ async function takeScreenshot(url: string, ratio: number) {
   // const maxHeight = 1200;
   // const finalHeight = Math.min(pageHeight, maxHeight);
 
-  const viewport = viewportFromRatio(ratio);
+  // const viewport = viewportFromRatio(ratio);
 
   // set viewport
   // await page.setViewportSize({
